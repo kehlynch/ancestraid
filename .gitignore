@@ -132,3 +132,5 @@ dmypy.json
 *.csv
 
 .cookie
+
+node_modules/

@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+    "name": "Ancestraid",
+    "description": "This adds some buttons to ancestry pages to enable csv downloads of matches",
+    "version": "0.1",
+    "content_scripts": [
+        {
+            "matches": ["https://www.ancestry.co.uk/*"],
+            "js": ["jquery-3.4.1.min.js", "content.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "cookies",
+        "https://*.ancestry.co.uk/",
+        "http://*.ancestry.co.uk/"
+    ],
+    "background": {
+        "scripts": ["background.js", "cookie.js"]
+    },
+    "browser_action": {
+      "default_icon": "ronnie.png"
+    }
+}
