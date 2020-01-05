@@ -5,7 +5,7 @@
     "version": "0.1",
     "content_scripts": [
         {
-            "matches": ["https://www.ancestry.co.uk/*"],
+            "matches": ["https://www.ancestry.co.uk/discoveryui-matches/match-list/*"],
             "js": ["jquery-3.4.1.min.js", "csvwriter.js", "content.js"],
             "run_at": "document_end"
         }

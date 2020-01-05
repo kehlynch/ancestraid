@@ -55,53 +55,67 @@ async function generateMatches(guid) {
   let rows = [];
   let pageNumber = 0;
   let count = 0;
-  while (true) {
-    count++;
-    console.log(`page ${pageNumber + 1}...`);
-    updateMessage(`generating page ${pageNumber + 1}...`);
-    
-    const pageRows = await getMatches(pageNumber, guid);
-    if (!!pageRows.length) {
-      rows = rows.concat(pageRows)
-    } else {
-      break;
-    }
-    pageNumber++;
-  }
+  try {
+    while (true) {
+      count++;
+      console.log(`page ${pageNumber + 1}...`);
+      updateMessage(`generating page ${pageNumber + 1}...`);
+      
+      let pageRows;
+      
+        pageRows = await getMatches(pageNumber, guid);
 
-  enableDownload(rows);
+      if (!!pageRows.length) {
+        rows = rows.concat(pageRows)
+      } else {
+        break;
+      }
+      pageNumber++;
+    }
+
+    enableDownload(rows);
+  } catch(e) {
+    console.error(e);
+    updateMessage('ERROR');
+  }
 }
 
-async function getMatches(pageNumber, guid, retry = 0) {
+async function getMatches(pageNumber, guid) {
   const url = buildUrl(guid, pageNumber);
-  // let rows = []
-  await $.ajax({
-    "dataType": "json",
-    "async": true,
-    "crossDomain": true,
-    "url": url,
-    "method": "GET",
-    "xhrFields": {
-      "withCredentials": true
-    },
-    success: (response) => {
-      const rows = getMatchRows(response);
-    },
-    error: (jqXHR, textStatus, errorThrown) => {
-      console.log('ERROR');
-      console.log('jqXHR:');
-      console.log(jqXHR);
-      console.log('textStatus:');
-      console.log(textStatus);
-      console.log('errorThrown:');
-      console.log(errorThrown);
-      if (retry > 2) {
-        throw "Too many errors"
+  const maxRetries = 3;
+  let retries = 0;
+  let rows = null;
+  let gotMatches = false;
+  while (!gotMatches) {
+    try {
+      result = await $.ajax({
+        "dataType": "json",
+        "async": true,
+        "crossDomain": true,
+        "url": url,
+        "method": "GET",
+        "xhrFields": {
+          "withCredentials": true
+        },
+        success: (response) => {
+          rows = getMatchRows(response);
+          gotMatches = true;
+        },
+        error: (jqXHR, textStatus) => {
+          console.log(`ERROR ${jqXHR.status}: ${textStatus}`);
+          retries++;
+        }
+      });
+    } catch(e) {
+      if (retries >= maxRetries) {
+        console.log("too many retries, aborting...")
+        throw "too many retries, aborting..."
       } else {
-        const rows = getMatches(pageNumber, guid, retry++)
+        console.log(`retrying ${retries} of ${maxRetries}...`)
       }
     }
-  });
+  }
+
   return rows;
 }
 
