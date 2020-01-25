@@ -144,5 +144,5 @@ function enableDownload(rows) {
 }
 
 function buildUrl(userGuid, pageNumber) {
-  return `https://www.ancestry.co.uk/discoveryui-matchesservice/api/samples/${userGuid}/matchesv2?bookmarkdata=%7B%22lastMatchesServicePageIdx%22%3A${pageNumber}%7D`
+  return `https://www.ancestry.co.uk/discoveryui-matchesservice/api/samples/${userGuid}/matches/list?bookmarkdata=%7B%22lastMatchesServicePageIdx%22%3A${pageNumber}%7D`
 }
