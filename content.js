@@ -94,9 +94,6 @@ async function getMatches(pageNumber, guid) {
         "crossDomain": true,
         "url": url,
         "method": "GET",
-        "xhrFields": {
-          "withCredentials": true
-        },
         success: (response) => {
           rows = getMatchRows(response);
           gotMatches = true;
